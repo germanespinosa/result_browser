@@ -14,7 +14,7 @@ window.onload = function () {
 };
 
 function load_world_details() {
-    loadfile('https://raw.githubusercontent.com/germanespinosa/results/master/' + parameters['result'] + '/experiment.json', function(data) {
+    loadfile(project_folder +'experiment.json', function(data) {
         var tag = document.getElementById("content")
         let view = document.getElementById("view").value;
         var entropyInd = parameters['entropy']
@@ -27,7 +27,11 @@ function load_world_details() {
         for (var j = 0; j < spawn_locations.length; j++) {
             x = spawn_locations[j][0];
             y = spawn_locations[j][1];
-            HTML += "<div class='world'><a href='episodesbrowse.html?result="+parameters["result"]+"&entropy="+ parameters["entropy"]+"&world=" + parameters["world"] + "&x=" + x + "&y=" + y + "'><img class='prey' src='https://raw.githubusercontent.com/germanespinosa/results/master/hi_complexity/img/world_" + worldInd + "_" + entropyInd + "_prey_" + view + "_" + x + "_" + y + ".png' /><img class='predator' src='https://raw.githubusercontent.com/germanespinosa/results/master/hi_complexity/img/world_" + worldInd + "_" + entropyInd + "_predator_" + view + "_" + x + "_" + y + ".png' /></a></div>"
+            HTML += "<div class='world'>";
+            HTML += "<a href='episodesbrowse.html?result="+parameters["result"]+"&entropy="+ parameters["entropy"]+"&world=" + parameters["world"] + "&x=" + x + "&y=" + y + "'>";
+            HTML += "<img class='prey' src='" + img_folder + "world_" + worldInd + "_" + entropyInd + "_prey_" + view + "_" + x + "_" + y + ".png' />";
+            HTML += "<img class='predator' src='" + img_folder + "world_" + worldInd + "_" + entropyInd + "_predator_" + view + "_" + x + "_" + y + ".png' />";
+            HTML += "</a></div>";
         }
         HTML += "</div>";
         tag.innerHTML = HTML;

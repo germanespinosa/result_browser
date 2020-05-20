@@ -7,6 +7,9 @@ function getUrlVars() {
 }
 parameters = getUrlVars();
 
+project_folder = "https://raw.githubusercontent.com/germanespinosa/results/master/" + parameters["result"] + "/";
+img_folder = project_folder + "img/";
+
 function round(a){
     return(Math.round(a * 100)/ 100);
 }
