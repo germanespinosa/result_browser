@@ -31,7 +31,7 @@ function set_visibility(){
 }
 
 function load_results(){
-    loadfile('https://raw.githubusercontent.com/germanespinosa/results/master/' + parameters['result'] + '/experiment.json', function(data) {
+    loadfile(project_folder + '/experiment.json', function(data) {
         let view = document.getElementById("view").value;
         var tag = document.getElementById("content")
         var HTML = ""
@@ -48,7 +48,11 @@ function load_results(){
             var worlds = Object.keys(entropy);
             for (var j = 0; j < worlds.length; j++) {
                 var worldInd = worlds[j];
-                HTML += "<div class='world'><a href='worlddetail.html?result=" + parameters['result'] + "&entropy=" + entropyInd + "&world=" + worldInd + "&view=" + view + "'><img class='prey' src='https://raw.githubusercontent.com/germanespinosa/results/master/" + parameters['result'] + "/img/world_" + worldInd + "_" + entropyInd + "_prey_" + view + ".png' /><img class='predator' src='https://raw.githubusercontent.com/germanespinosa/results/master/" + parameters['result'] + "/img/world_" + worldInd + "_" + entropyInd + "_predator_" + view + ".png' /></a></div>"
+                HTML += "<div class='world'>";
+                HTML += "<a href='worlddetail.html?result=" + parameters['result'] + "&entropy=" + entropyInd + "&world=" + worldInd + "&view=" + view + "'>";
+                HTML += "<img class='prey' src='" + img_folder + "world_" + worldInd + "_" + entropyInd + "_prey_" + view + ".png' />";
+                HTML += "<img class='predator' src='" + img_folder + "world_" + worldInd + "_" + entropyInd + "_predator_" + view + ".png' />";
+                HTML += "</a></div>"
             }
             HTML += "</div>"
         }
