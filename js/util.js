@@ -7,6 +7,9 @@ function getUrlVars() {
 }
 parameters = getUrlVars();
 
+function round(a){
+    return(Math.round(a * 100)/ 100);
+}
 
 function loadfile (url, callback) {
     let request = new XMLHttpRequest();
