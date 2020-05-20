@@ -48,7 +48,7 @@ function load_results(){
             var worlds = Object.keys(entropy);
             for (var j = 0; j < worlds.length; j++) {
                 var worldInd = worlds[j];
-                HTML += "<div class='world'><a href='worlddetail.html?result=" + parameters['result'] + "&entropy=" + entropyInd + "&world=" + worldInd + "&view=" + view + "'><img class='prey' src='https://raw.githubusercontent.com/germanespinosa/results/master/hi_complexity/img/world_" + worldInd + "_" + entropyInd + "_prey_" + view + ".png' /><img class='predator' src='https://raw.githubusercontent.com/germanespinosa/results/master/hi_complexity/img/world_" + worldInd + "_" + entropyInd + "_predator_" + view + ".png' /></a></div>"
+                HTML += "<div class='world'><a href='worlddetail.html?result=" + parameters['result'] + "&entropy=" + entropyInd + "&world=" + worldInd + "&view=" + view + "'><img class='prey' src='https://raw.githubusercontent.com/germanespinosa/results/master/" + parameters['result'] + "/img/world_" + worldInd + "_" + entropyInd + "_prey_" + view + ".png' /><img class='predator' src='https://raw.githubusercontent.com/germanespinosa/results/master/" + parameters['result'] + "/img/world_" + worldInd + "_" + entropyInd + "_predator_" + view + ".png' /></a></div>"
             }
             HTML += "</div>"
         }
