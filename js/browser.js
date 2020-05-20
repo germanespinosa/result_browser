@@ -43,7 +43,7 @@ function load_results(){
 
         for (var i = 0; i < entropies.length; i++) {
             var entropyInd = entropies[i];
-            HTML += "<div class='entropy'><div class='entropy_title'><h2>Entropy: 0." + entropies[i] + "</h2><h2>survival rate:" + round(data.summary[entropyInd].survival_rate ) + "%</h2><h2> Avg. length:" + round(data.summary[entropyInd].avg_length) + "</h2></div>";
+            HTML += "<div class='entropy'><div class='entropy_title'><h2>Entropy: 0." + entropies[i] + "</h2><h2>survival rate:" + round(data.summary[entropyInd].survival_rate ) + "</h2><h2> Avg. length:" + round(data.summary[entropyInd].avg_length) + "</h2></div>";
             var entropy = data.worlds[entropyInd];
             var worlds = Object.keys(entropy);
             for (var j = 0; j < worlds.length; j++) {
