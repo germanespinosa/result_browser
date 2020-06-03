@@ -8,7 +8,7 @@ function getUrlVars() {
     });
     let cookies = document.cookie.split(";");
     for (let i=0;i<cookies.length;i++)
-        vars[cookies[i].split("=")[0].trim()] = cookies[i].split("=")[1].trim();
+        if (cookies[i] != "" )vars[cookies[i].split("=")[0].trim()] = cookies[i].split("=")[1].trim();
     return vars;
 }
 parameters = getUrlVars();
