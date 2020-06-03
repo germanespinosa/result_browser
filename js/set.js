@@ -28,10 +28,13 @@ function load_set(experiment_name, group_name, world_name, set_name){
                 HTML += "<div class='control_box' id='control_box'>";
                     HTML += "<div class='btn btn_first' id='btn_first' onclick='first()'></div>";
                     HTML += "<div class='btn btn_prev' id='btn_prev' onclick='prev()'></div>";
-                    HTML += "<div class='btn btn_play' id='btn_play' onclick='play()'></div>";
+                    HTML += "<div class='btn btn_play' id='btn_play' onclick='play_pause()'></div>";
                     HTML += "<div class='btn btn_next' id='btn_next' onclick='next()'></div>";
                     HTML += "<div class='btn btn_last' id='btn_last' onclick='last()'></div>";
                 HTML += "</div>";
+            HTML += "<div class='current_expected_reward' id='current_expected_reward'>";
+
+            HTML +="</div>"
             HTML +="</div>"
             HTML += "<div class='left_spacer'></div>";
         HTML +="</div>"
@@ -48,41 +51,60 @@ function load_set(experiment_name, group_name, world_name, set_name){
 
 function first(){
     CurrentEpisode.step = 0;
+    CurrentEpisode.agent = agents.length-1;
     DrawEpisodeStep();
 }
 
 Timer = -1;
+Limit = -1;
 
-function play(){
+function play() {
+    document.getElementById("btn_play").className = "btn btn_pause";
+    if (Agent==agents.length)
+        Limit= CurrentEpisode.trajectories[0].length-1;
+    else
+        Limit = CurrentEpisode.trajectories[Agent].length-1;
+
+    Timer = setInterval(next, 700);
+}
+
+function pause() {
+    if (Timer==-1) return;
+    document.getElementById("btn_play").className = "btn btn_play";
+    clearInterval(Timer);
+    Timer= -1;
+}
+
+function play_pause(){
     if (Timer < 0) {
-        document.getElementById("btn_play").className = "btn btn_pause";
-        Timer = setInterval(next, 300);
+        play();
     }else{
-        document.getElementById("btn_play").className = "btn btn_play";
-        clearInterval(Timer);
-        Timer= -1;
+        pause();
     }
 }
 
 function last(){
-    if (Agent==agents.length)
-        CurrentEpisode.step = CurrentEpisode.trajectories[0].length-1;
-    else
-        CurrentEpisode.step = CurrentEpisode.trajectories[Agent].length-1;
+    CurrentEpisode.step = Limit;
     DrawEpisodeStep();
 }
 
 function next(){
-    CurrentEpisode.step += 1;
-    if (Agent==agents.length) {
-        if (CurrentEpisode.step > CurrentEpisode.trajectories[0].length - 1) {
-            CurrentEpisode.step = CurrentEpisode.trajectories[0].length - 1;
-            play();
+    if (Agent==agents.length){
+        CurrentEpisode.agent += 1;
+        if (CurrentEpisode.agent == agents.length){
+            CurrentEpisode.agent = 0;
+            CurrentEpisode.step += 1;
         }
-    }else {
-        if (CurrentEpisode.step > CurrentEpisode.trajectories[Agent].length - 1) {
-            CurrentEpisode.step = CurrentEpisode.trajectories[Agent].length - 1;
-            play();
+        if (CurrentEpisode.step > Limit) {
+            CurrentEpisode.step = Limit;
+            CurrentEpisode.agent = agents.length-1;
+            pause();
+        }
+    } else {
+        CurrentEpisode.step += 1;
+        if (CurrentEpisode.step > Limit) {
+            CurrentEpisode.step = Limit;
+            pause();
         }
     }
     DrawEpisodeStep();

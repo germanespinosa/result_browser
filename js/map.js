@@ -103,14 +103,17 @@ function DrawEpisodeStep(){
         }
 
         let max = 0;
-        for (let step=0; step<=CurrentEpisode.step;step++){
+        let last_x=0,lasty=0;
+        for (let step=0; step<CurrentEpisode.step || ( step == CurrentEpisode.step && agent_ind <= CurrentEpisode.agent);step++){
             let position = CurrentEpisode.trajectories[agent_ind][step];
             let x = position[0] - CurrentEpisode.coordinates[0][0];
             let y = position[1] - CurrentEpisode.coordinates[0][1];
             cells[y][x] += 1;
             if (max<cells[y][x]) max = cells[y][x];
-            if (step==CurrentEpisode.step) cells[y][x]= max + 3;
+            last_x=x;
+            last_y=y;
         }
+        cells[last_y][last_x]= max + 3;
 
         let svg = d3.select("#current_episode").append("svg")
             .style("position", "absolute")
@@ -133,6 +136,7 @@ function SetCurrentEpisode(div, index, coordinates, episode, occlusions, spawn_l
     CurrentEpisode.occlusions = occlusions;
     CurrentEpisode.spawn_locations = spawn_locations;
     CurrentEpisode.step = 0;
+    CurrentEpisode.agent = agents.length - 1;
     DrawEpisodeStep();
     d3.selectAll(".episode_box").style("border","0");
     div.style.border = "2px solid #FF0000";
