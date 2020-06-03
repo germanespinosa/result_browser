@@ -3,12 +3,9 @@ results=['goal attained','goal not attained', 'all']
 
 function getUrlVars() {
     let vars = {};
-    let query = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+    let query = window.location.href.split("#")[0].replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
         vars[key] = value;
     });
-    let cookies = document.cookie.split(";");
-    for (let i=0;i<cookies.length;i++)
-        if (cookies[i] != "" )vars[cookies[i].split("=")[0].trim()] = cookies[i].split("=")[1].trim();
     return vars;
 }
 parameters = getUrlVars();
@@ -41,11 +38,14 @@ Range = function(a,b){
     return r;
 }
 
-function GetUrl(url, experiment, group, world, set, episode){
+function GetUrl(url, experiment, group, world, set){
     let uri = url + "?experiment=" + experiment;
     if (typeof group != "undefined") uri += "&group=" + group;
     if (typeof world != "undefined") uri += "&world=" + world;
     if (typeof set != "undefined") uri += "&set=" + set;
-    if (typeof episode != "undefined") uri += "&episode=" + episode;
     return uri;
+}
+
+function NavigateTo (url){
+    window.location= url + "&Winner=" + Winner +  "&Agent=" + Agent
 }

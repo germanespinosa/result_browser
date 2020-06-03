@@ -1,18 +1,17 @@
 if (typeof parameters.Winner == "undefined" ) {
-    Winner = 0;
+    Winner = agents.length;
 
 } else {
     Winner = parameters.Winner;
 }
 if (typeof parameters.Agent == "undefined" ) {
-    Agent = 0;
+    Agent = agents.length;
 } else {
     Agent = parameters.Agent;
 }
 
 function updateWinner(){
     Winner = document.getElementById("winner_select").value;
-    document.cookie = "Winner="+Winner;
     let sheet = document.createElement('style')
     let HTML = ""
     for (let r=0;r<=agents.length;r++){
@@ -29,7 +28,6 @@ function updateWinner(){
 
 function updateAgent(){
     Agent = document.getElementById("agent_select").value;
-    document.cookie = "Agent="+Agent;
     let divMaps = d3.selectAll(".multivalue")
         .each(function () {
             this.innerHTML = this.attributes["agent-values"].value.split(";")[Agent];
@@ -65,7 +63,7 @@ function loadSettings() {
     let settings = document.getElementById("settings");
     let HTML = ""
     //results
-    HTML += "<div class='setting_box'><label for='winner_select'>Winner: </label><select id='winner_select'>"
+    HTML += "<div class='setting_box'><label for='winner_select'>Result: </label><select id='winner_select'>"
     for (let r=0;r<agents.length;r++){
         HTML += "<option value='" + r + "'" + ( r==Winner?" selected='selected'" :"") + ">"+ results[r] + "</option>"
     }

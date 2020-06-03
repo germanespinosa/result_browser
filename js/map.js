@@ -126,19 +126,17 @@ function DrawEpisodeStep(){
     }
 }
 
-function SetCurrentEpisode(div, coordinates, estimated_rewards, trajectories, occlusions, spawn_locations){
-    CurrentEpisode = {
-        container : div,
-        coordinates: coordinates,
-        estimated_rewards: estimated_rewards,
-        trajectories: trajectories,
-        occlusions: occlusions,
-        spawn_locations: spawn_locations,
-        step: 0
-    };
+function SetCurrentEpisode(div, index, coordinates, episode, occlusions, spawn_locations){
+    CurrentEpisode = episode;
+    CurrentEpisode.container = div;
+    CurrentEpisode.coordinates = coordinates;
+    CurrentEpisode.occlusions = occlusions;
+    CurrentEpisode.spawn_locations = spawn_locations;
+    CurrentEpisode.step = 0;
     DrawEpisodeStep();
     d3.selectAll(".episode_box").style("border","0");
     div.style.border = "2px solid #FF0000";
+    location.hash = index;
     play();
 }
 
@@ -148,7 +146,8 @@ CreateEpisodes = function (DOMdiv, winner, width, height, experiment, group, wor
 
     let source = GetSource(experiment, group, world, set, 0, 0);
 
-    let first = true;
+    let selected_episode = -1;
+    if (location.hash != "") selected_episode = location.hash.replace("#","");
     d3.json(source, function (data) {
         let occlusions = data.occlusions;
         let cells = data.cells;
@@ -158,15 +157,16 @@ CreateEpisodes = function (DOMdiv, winner, width, height, experiment, group, wor
                 if (winner != agents.length && winner != episode.winner) continue;
                 let container = div.append("div")
                     .style("cursor","pointer")
+                    .attr("id","episode_" + episode_ind)
                     .attr("class","episode_box")
-                    .attr("onClick","SetCurrentEpisode(this, " + JSON.stringify(data.coordinates) + "," +
-                                                                 JSON.stringify(episode.estimated_rewards) + "," +
-                                                                 JSON.stringify(episode.trajectories) + "," +
+                    .attr("onClick","SetCurrentEpisode(this, " + episode_ind + "," +
+                                                                 JSON.stringify(data.coordinates) + "," +
+                                                                 JSON.stringify(episode) + "," +
                                                                  JSON.stringify(occlusions) + "," +
                                                                  JSON.stringify(data.spawn_locations) + ")");
-                if (first) {
-                    SetCurrentEpisode( container.node(), data.coordinates, episode.estimated_rewards, episode.trajectories, occlusions, data.spawn_locations);
-                    first = false;
+                if (selected_episode == episode_ind || selected_episode == -1) {
+                    selected_episode = episode_ind;
+                    SetCurrentEpisode( container.node(), episode_ind, data.coordinates, episode, occlusions, data.spawn_locations);
                 }
                 for (let agent_ind=0;agent_ind<episode.trajectories.length;agent_ind++) {
                     let trajectory =  episode.trajectories[agent_ind];
@@ -191,6 +191,8 @@ CreateEpisodes = function (DOMdiv, winner, width, height, experiment, group, wor
                     DrawMap(data.cells, occlusions, data.spawn_locations, svg, agent_ind, width, height)
                 }
             }
+
+            DOMdiv.scrollTo(0,document.getElementById("episode_" + selected_episode).offsetTop - 200);
         });
     });
 }
@@ -266,7 +268,7 @@ function AddMap(width, height, container, experiment, group, world, set_,link){
     let onclick = "";
     if (link != ""){
         container.style.cursor = "pointer"
-        onclick = "onclick=\"window.location='" + link + "'\" ";
+        onclick = "onclick=\"NavigateTo('" + link + "')\" ";
     }
 
     let set_s = "";
