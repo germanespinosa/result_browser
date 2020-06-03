@@ -1,4 +1,79 @@
-img{
+html,body { height:95%; }
+
+{
+    box-sizing: border-box;
+}
+
+/*experiment*/
+
+/*.group_table:after {*/
+/*    content: "";*/
+/*    display: table;*/
+/*    clear: both;*/
+/*}*/
+
+.group_column {
+    position:relative;
+}
+
+.title{
+    padding-top: 5px;
+    font-size: large;
+    width: 90% ;
+    text-align: center;
+    background-color: aquamarine;
+    margin-left: 5%;
+}
+
+#title{
+    float: top;
+    height:5%;
+}
+
+#content{
+    float:bottom;
+    width: 100%;
+    height: 75%;
+    text-align: center;
+}
+
+/*stats*/
+
+.stats{
+    position: relative;
+    padding:0 0px;
+    margin:0 0px;
+    border: black solid 1px;
+    left: 50%;
+    transform: translate(-50%, 0%);
+}
+
+.stat_box{
+    float:left;
+    padding:0 0px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+
+.data_point {
+    width: 100%;
+    height: 25px;
+}
+
+.data_point_label {
+    float: left;
+    padding-left: 5px;
+}
+
+.data_point_value {
+    float: right;
+    padding-right: 5px;
+}
+
+/*maps*/
+
+.map{
     float:left;
     height:150px;
     width:150px;
@@ -6,26 +81,125 @@ img{
     position: absolute;
     left: 0px;
     top: 0px;
-}
-
-#settings{
-    width: 100%;
-}
-
-#content{
-    padding: 0 0px;
     margin: 0 0px;
+    background-color: white;
 }
 
-.entropy{
-    width:150px;
-    padding:0 0px;
-    margin:0 0px;
-}
-.world{
+.map_box{
     position: relative;
     width:150px;
     height:150px;
-    padding:0 0px;
+    padding-top:5px;
+    padding-bottom:5px;
     margin:0 0px;
+    margin: 0 0px;
+    left: 50%;
+    transform: translate(-50%, 0%);
+}
+
+/*set*/
+
+.set_layout{
+    height: 100%;
+    margin: 0 auto;
+    display: inline-block;
+}
+.left_spacer{
+    height: 100%;
+    float:left;
+}
+
+.left_pane {
+    width:225px;
+    float:left;
+}
+.right_pane {
+    height: 100%;
+    float:left;
+}
+
+.right_spacer{
+    width:175px;
+    float:left;
+}
+
+/*episodes*/
+
+.current_episode{
+    position: relative;
+    width:600px;
+    height:600px;
+    border: 2px solid;
+    background-color: white;
+}
+
+.episodes{
+    width: 225px;
+    height: 655px;
+    overflow-y: scroll;
+    background-color: grey;
+    border: 1px solid;
+}
+
+.episode_box{
+    position: relative;
+    width:200px;
+    height:200px;
+    margin:0 0px;
+    margin: 0 0px;
+    margin: 5px;
+    background-color: white;
+}
+
+/*settings*/
+
+.setting_box {
+    padding: 5px;
+}
+
+/*playback*/
+
+.control_box{
+    position: relative;
+    float: left;
+    height: 55px;
+    left: 50%;
+    transform: translate(-50%, 0%);
+}
+
+.btn{
+    border-radius: 5px;
+    border: 2px solid #999999;
+    float: left;
+    height: 55px;
+}
+
+.btn_play{
+    width: 60px;
+    background: url('img/buttons.png') -197px 0px;
+}
+
+.btn_pause{
+    width: 60px;
+    background: url('img/buttons.png') -100px 0;
+}
+
+.btn_first{
+    width: 70px;
+    background: url('img/buttons.png') 0 -201px;
+}
+
+.btn_prev{
+    width: 100px;
+    background: url('img/buttons.png') 0 -100px;
+}
+
+.btn_next{
+    width: 100px;
+    background: url('img/buttons.png') -156px -100px;
+}
+
+.btn_last{
+    width: 70px;
+    background: url('img/buttons.png') -186px -201px;
 }
