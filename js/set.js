@@ -1,4 +1,3 @@
-
 window.onload = function () {
     let experiment_name = parameters.experiment;
     let group_name = parameters.group;
@@ -9,6 +8,10 @@ window.onload = function () {
     loadSettings();
     load_set(experiment_name,group_name,wold_name,set_name);
 };
+
+
+let DisplayStep;
+let DisplayValue;
 
 function load_set(experiment_name, group_name, world_name, set_name){
     loadfile(project_folder + '/stats.json', function(experiment) {
@@ -25,11 +28,13 @@ function load_set(experiment_name, group_name, world_name, set_name){
             HTML += "<div class='right_pane' id='replay'>";
                 HTML += "<div class='current_episode' id='current_episode'></div>";
                 HTML += "<div class='control_box' id='control_box'>";
+                    HTML += "<div class='display display_step' id='step'></div>";
                     HTML += "<div class='btn btn_first' id='btn_first' onclick='first()'></div>";
                     HTML += "<div class='btn btn_prev' id='btn_prev' onclick='prev()'></div>";
                     HTML += "<div class='btn btn_play' id='btn_play' onclick='play_pause()'></div>";
                     HTML += "<div class='btn btn_next' id='btn_next' onclick='next()'></div>";
                     HTML += "<div class='btn btn_last' id='btn_last' onclick='last()'></div>";
+                    HTML += "<div class='display display_value' id='value'></div>";
                 HTML +="</div>"
                 HTML += "<div class='current_expected_rewards' id='current_expected_rewards'>";
                 HTML += "</div>";
@@ -37,7 +42,8 @@ function load_set(experiment_name, group_name, world_name, set_name){
             HTML += "<div class='left_spacer'></div>";
         HTML +="</div>"
         content.innerHTML = HTML;
-
+        DisplayStep = document.getElementById("step");
+        DisplayValue = document.getElementById("value");
         let sheet = document.createElement('style')
         sheet.innerHTML = ".group_table { column-count: " + 4 + ";}";
         document.body.appendChild(sheet);
@@ -50,6 +56,7 @@ function first(){
     CurrentEpisode.step = 0;
     CurrentEpisode.agent = agents.length-1;
     DrawEpisodeStep();
+    UpdateRewardsProgression();
 }
 
 Timer = -1;
@@ -83,6 +90,7 @@ function play_pause(){
 function last(){
     CurrentEpisode.step = Limit;
     DrawEpisodeStep();
+    UpdateRewardsProgression();
 }
 
 function next(){
@@ -109,10 +117,16 @@ function next(){
 }
 
 function prev(){
-    CurrentEpisode.step -= 1;
+    if (CurrentEpisode.agent == 0) {
+        CurrentEpisode.step -= 1;
+        CurrentEpisode.agent = agents.length - 1;
+    } else {
+        CurrentEpisode.agent -= 1;
+    }
     if (CurrentEpisode.step<0)
         CurrentEpisode.step=0;
     DrawEpisodeStep();
+    UpdateRewardsProgression();
 }
 
 
@@ -132,12 +146,6 @@ function UpdateRewardsProgression( ){
 
     let div = d3.select("#current_expected_rewards");
     div.node().innerHTML = "";
-
-    let tooltip = div.append("div")
-        .attr("class", "tooltip")
-        .style("visibility","hidden")
-        .text("a simple tooltip")
-        .style("position","absolute");
 
     let svg = div.append("svg")
         .attr("width", width + margin.left + margin.right)
@@ -178,6 +186,8 @@ function UpdateRewardsProgression( ){
                 let last_step = CurrentEpisode.agent < agent_ind ? CurrentEpisode.step - 1 : CurrentEpisode.step;
                 if (i>last_step) return 3;
                 if (i == last_step) {
+                    DisplayStep.innerText = "step: " + i + "/" + CurrentEpisode.values[CurrentEpisode.agent].length;
+                    DisplayValue.innerText = "value: " + round(CurrentEpisode.values[CurrentEpisode.agent][i]);
                     return 6;
                 }
                 return 3; })
@@ -185,17 +195,28 @@ function UpdateRewardsProgression( ){
             .on("click", function(d, i, c) {
                 CurrentEpisode.step = i;
                 CurrentEpisode.agent = agent_ind;
-                DrawEpisodeStep();
-                UpdateRewardsProgression();
+                next();
+                DisplayStep.innerText = "step: " + i + "/" + CurrentEpisode.values[agent_ind].length;
+                DisplayValue.innerText = "value: " + round(CurrentEpisode.values[agent_ind][i]);
             })
             .on("mouseover", function(d , i) {
-                tooltip.style("left", (xScale(i + agent_ind / agent_count) + 5) + "px")
-                    .style("top", (yScale(d.y)-25) + "px")
-                    .style("visibility", "visible")
-                    .text("Step: "+ i + " value: " + round(CurrentEpisode.values[agent_ind][i]));
+                console.log(this,d,i);
+                d3.select(this)
+                    .style("r",10);
+                DisplayStep.innerText = "step: " + i + "/" + CurrentEpisode.values[agent_ind].length;
+                DisplayValue.innerText = "value: " + round(CurrentEpisode.values[agent_ind][i]);
             })
-            .on("mouseout", function() {
-                tooltip.style("visibility", "hidden");
+            .on("mouseout", function(d, i) {
+                let last_step = CurrentEpisode.agent < agent_ind ? CurrentEpisode.step - 1 : CurrentEpisode.step;
+                if (i == last_step) {
+                    d3.select(this)
+                        .style("r",6);
+                } else {
+                    d3.select(this)
+                        .style("r",3);
+                }
+                DisplayStep.innerText = "step: " + CurrentEpisode.step + "/" + CurrentEpisode.values[agent_ind].length;
+                DisplayValue.innerText = "value: " + round(CurrentEpisode.values[agent_ind][CurrentEpisode.step]);
             })
             .style("cursor", "pointer");
 

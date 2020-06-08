@@ -139,7 +139,6 @@ function SetCurrentEpisode(div, index, coordinates, episode, occlusions, spawn_l
     CurrentEpisode.spawn_locations = spawn_locations;
     CurrentEpisode.step = 0;
     CurrentEpisode.agent = agents.length - 1;
-    console.log(CurrentEpisode);
     DrawEpisodeStep();
     d3.selectAll(".episode_box").style("border","0");
     div.style.border = "2px solid #FF0000";
