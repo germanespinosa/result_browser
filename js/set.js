@@ -23,7 +23,6 @@ function load_set(experiment_name, group_name, world_name, set_name){
                 HTML += "<div class='episodes' id='episodes_" + set_name + "' experiment='" + experiment_name + "' group='" + group_name + "' world='" + world_name + "' set='" + set_name + "'></div>";
             HTML += "</div>";
             HTML += "<div class='right_pane' id='replay'>";
-                HTML += "<div class='title' id='title_replay'>replay</div>";
                 HTML += "<div class='current_episode' id='current_episode'></div>";
                 HTML += "<div class='control_box' id='control_box'>";
                     HTML += "<div class='btn btn_first' id='btn_first' onclick='first()'></div>";
@@ -31,10 +30,9 @@ function load_set(experiment_name, group_name, world_name, set_name){
                     HTML += "<div class='btn btn_play' id='btn_play' onclick='play_pause()'></div>";
                     HTML += "<div class='btn btn_next' id='btn_next' onclick='next()'></div>";
                     HTML += "<div class='btn btn_last' id='btn_last' onclick='last()'></div>";
+                HTML +="</div>"
+                HTML += "<div class='current_expected_rewards' id='current_expected_rewards'>";
                 HTML += "</div>";
-            HTML += "<div class='current_expected_reward' id='current_expected_reward'>";
-
-            HTML +="</div>"
             HTML +="</div>"
             HTML += "<div class='left_spacer'></div>";
         HTML +="</div>"
@@ -43,10 +41,9 @@ function load_set(experiment_name, group_name, world_name, set_name){
         let sheet = document.createElement('style')
         sheet.innerHTML = ".group_table { column-count: " + 4 + ";}";
         document.body.appendChild(sheet);
-
-        //CreateEpisodes(document.getElementById("episodes_"+set_name),150,150, experiment_name, group_name, world_name, set_name);
         updateView();
     });
+
 }
 
 function first(){
@@ -65,7 +62,7 @@ function play() {
     else
         Limit = CurrentEpisode.trajectories[Agent].length-1;
 
-    Timer = setInterval(next, 700);
+    Timer = setInterval(next, 300);
 }
 
 function pause() {
@@ -108,6 +105,7 @@ function next(){
         }
     }
     DrawEpisodeStep();
+    UpdateRewardsProgression();
 }
 
 function prev(){
@@ -117,3 +115,89 @@ function prev(){
     DrawEpisodeStep();
 }
 
+
+function UpdateRewardsProgression( ){
+    let margin = {top: 10, right: 20, bottom: 10, left: 30}
+        , width = 400 // Use the window's width
+        , height = 175; // Use the window's height
+
+    let n = CurrentEpisode.values[0].length;
+    let xScale = d3.scaleLinear()
+        .domain([0, n]) // input
+        .range([0, width]); // output
+
+    let yScale = d3.scaleLinear()
+        .domain([0, CurrentEpisode.max_value]) // input
+        .range([height, 0]); // output
+
+    let div = d3.select("#current_expected_rewards");
+    div.node().innerHTML = "";
+
+    let tooltip = div.append("div")
+        .attr("class", "tooltip")
+        .style("visibility","hidden")
+        .text("a simple tooltip")
+        .style("position","absolute");
+
+    let svg = div.append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(d3.axisLeft(yScale)); // Create an axis component with d3.axisLeft
+
+    let agent_count = CurrentEpisode.values.length;
+    for (let agent_ind=0;agent_ind<agent_count;agent_ind++) {
+
+        let dataset = d3.range(n).map(function (d) {
+            return {"y": CurrentEpisode.values[agent_ind][d]}
+        })
+
+        let line = d3.line()
+            .x(function(d, i) { return xScale(i + agent_ind / agent_count) + 5 ; }) // set the x values for the line generator
+            .y(function(d) { return yScale(d.y); }) // set the y values for the line generator
+            .curve(d3.curveMonotoneX) // apply smoothing to the line
+
+        svg.append("path")
+            .datum(dataset) // 10. Binds data to the line
+            .attr("class", "heat_map_" + agent_ind) // Assign a class for styling
+            .attr("d", line) // 11. Calls the line generator
+            .style("fill", "none")
+            .style("stroke", fill_colors[agent_ind])
+            .style("stroke-width", "3");
+
+        svg.selectAll()
+            .data(dataset)
+            .enter().append("circle") // Uses the enter().append() method
+            .attr("cx", function(d, i) { return xScale(i + agent_ind / agent_count) + 5 })
+            .attr("cy", function(d) { return yScale(d.y) })
+            .attr("r", function(d,i) {
+                let last_step = CurrentEpisode.agent < agent_ind ? CurrentEpisode.step - 1 : CurrentEpisode.step;
+                if (i>last_step) return 3;
+                if (i == last_step) {
+                    return 6;
+                }
+                return 3; })
+            .style("fill", fill_colors[agent_ind])
+            .on("click", function(d, i, c) {
+                CurrentEpisode.step = i;
+                CurrentEpisode.agent = agent_ind;
+                DrawEpisodeStep();
+                UpdateRewardsProgression();
+            })
+            .on("mouseover", function(d , i) {
+                tooltip.style("left", (xScale(i + agent_ind / agent_count) + 5) + "px")
+                    .style("top", (yScale(d.y)-25) + "px")
+                    .style("visibility", "visible")
+                    .text("Step: "+ i + " value: " + round(CurrentEpisode.values[agent_ind][i]));
+            })
+            .on("mouseout", function() {
+                tooltip.style("visibility", "hidden");
+            })
+            .style("cursor", "pointer");
+
+    }
+}

@@ -5,12 +5,11 @@ CreateHeatmap = function (DOMdiv, winner, width, height){
 
     let div = d3.select(DOMdiv);
 
-    let experiment = div.attr("experiment");
     let group = div.attr("group");
     let world = div.attr("world");
     let set = div.attr("set");
 
-    let source = "https://raw.githubusercontent.com/germanespinosa/results/master/" + experiment + "/" + group + "/" + world + "/" + set + "/episodes.json";
+    let source = project_folder + group + "/" + world + "/" + set + "/episodes.json";
 
     d3.json(source, function (episodes) {
 

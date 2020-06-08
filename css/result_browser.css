@@ -127,15 +127,28 @@ html,body { height:95%; }
 
 .current_episode{
     position: relative;
-    width:600px;
-    height:600px;
+    width:450px;
+    height:450px;
     border: 2px solid;
     background-color: white;
 }
 
+.current_expected_rewards{
+    position: relative;
+    width: 450px;
+    height: 196px;
+    border: 2px solid;
+    background-color: lightgrey;
+}
+
+.tooltip{
+    background-color: white;
+    border: 1px solid;
+}
+
 .episodes{
     width: 225px;
-    height: 655px;
+    height: 656px;
     overflow-y: scroll;
     background-color: grey;
     border: 1px solid;
@@ -145,8 +158,6 @@ html,body { height:95%; }
     position: relative;
     width:200px;
     height:200px;
-    margin:0 0px;
-    margin: 0 0px;
     margin: 5px;
     background-color: white;
 }
@@ -161,45 +172,44 @@ html,body { height:95%; }
 
 .control_box{
     position: relative;
-    float: left;
-    height: 55px;
-    left: 50%;
-    transform: translate(-50%, 0%);
+    height: 30px;
+    width: 450px;
+    margin-left: 100px;
 }
 
 .btn{
     border-radius: 5px;
     border: 2px solid #999999;
     float: left;
-    height: 55px;
+    height: 27px;
 }
 
 .btn_play{
-    width: 60px;
-    background: url('img/buttons.png') -197px 0px;
+    width: 30px;
+    background: url('img/buttons.png') -98px 0px;
 }
 
 .btn_pause{
-    width: 60px;
-    background: url('img/buttons.png') -100px 0;
+    width: 30px;
+    background: url('img/buttons.png') -50px 0;
 }
 
 .btn_first{
-    width: 70px;
-    background: url('img/buttons.png') 0 -201px;
-}
-
-.btn_prev{
-    width: 100px;
+    width: 35px;
     background: url('img/buttons.png') 0 -100px;
 }
 
+.btn_prev{
+    width: 50px;
+    background: url('img/buttons.png') 0 -50px;
+}
+
 .btn_next{
-    width: 100px;
-    background: url('img/buttons.png') -156px -100px;
+    width: 50px;
+    background: url('img/buttons.png') -78px -50px;
 }
 
 .btn_last{
-    width: 70px;
-    background: url('img/buttons.png') -186px -201px;
+    width: 35px;
+    background: url('img/buttons.png') -93px -100px;
 }

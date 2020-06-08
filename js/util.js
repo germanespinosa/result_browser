@@ -1,5 +1,7 @@
 agents=['prey','predator']
 results=['goal attained','goal not attained', 'all']
+fill_colors = ["red", "blue"];
+agent_colors = ["green", "orange"];
 
 function getUrlVars() {
     let vars = {};
@@ -10,7 +12,7 @@ function getUrlVars() {
 }
 parameters = getUrlVars();
 project_folder = "https://raw.githubusercontent.com/germanespinosa/results/master/" + parameters["experiment"] + "/";
-img_folder = project_folder + "img/";
+img_folder = project_folder + "heatmaps/";
 
 function round(a){
     return(Math.round(a * 100)/ 100);

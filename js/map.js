@@ -1,6 +1,3 @@
-var fill_colors = ["red", "blue"];
-var agent_colors = ["orange", "green"];
-
 Map = function (cells, width, height, color) {
     let cols = cells[0].length;
     let rows = cells.length;
@@ -35,9 +32,9 @@ Map = function (cells, width, height, color) {
 
 GetSource = function (experiment,group,world,set,winner,agent){
     if (set == null)
-        return "https://raw.githubusercontent.com/germanespinosa/results/master/" + experiment + "/img/" + group + "/" + world + "_" + winner + "_" + agent + ".json";
+        return img_folder + group + "/" + world + "_" + winner + "_" + agent + ".json";
     else
-        return "https://raw.githubusercontent.com/germanespinosa/results/master/" + experiment + "/img/" + group + "/" + world + "/" + set + "_" + winner + "_" + agent + ".json";
+        return img_folder + group + "/" + world + "/" + set + "_" + winner + "_" + agent + ".json";
 }
 
 Render = function () {
@@ -88,8 +85,8 @@ var CurrentEpisode;
 
 
 function DrawEpisodeStep(){
-    let width = 600;
-    let height = 600;
+    let width = 450;
+    let height = 450;
     document.getElementById("current_episode").innerHTML="";
     for (let agent_ind = 0;agent_ind < agents.length;agent_ind++) {
 
@@ -131,19 +128,33 @@ function DrawEpisodeStep(){
 
 function SetCurrentEpisode(div, index, coordinates, episode, occlusions, spawn_locations){
     CurrentEpisode = episode;
+
+    CurrentEpisode.max_value = 0;
+    for (let i=0; i<CurrentEpisode.values.length;i++)
+        for (let j=0; j<CurrentEpisode.values[i].length;j++)
+            if (CurrentEpisode.values[i][j] > CurrentEpisode.max_value) CurrentEpisode.max_value=CurrentEpisode.values[i][j];
     CurrentEpisode.container = div;
     CurrentEpisode.coordinates = coordinates;
     CurrentEpisode.occlusions = occlusions;
     CurrentEpisode.spawn_locations = spawn_locations;
     CurrentEpisode.step = 0;
     CurrentEpisode.agent = agents.length - 1;
+    console.log(CurrentEpisode);
     DrawEpisodeStep();
     d3.selectAll(".episode_box").style("border","0");
     div.style.border = "2px solid #FF0000";
     location.hash = index;
+    pause();
     play();
 }
 
+function GetWinner(values){
+    let max = 0;
+    for (let i=1; i<values.length ; i++){
+        if (values[i][values[i].length-1]>values[max][values[max].length-1]) max = i;
+    }
+    return max;
+}
 
 CreateEpisodes = function (DOMdiv, winner, width, height, experiment, group, world, set){
     let div = d3.select(DOMdiv);
@@ -158,6 +169,7 @@ CreateEpisodes = function (DOMdiv, winner, width, height, experiment, group, wor
         d3.json("https://raw.githubusercontent.com/germanespinosa/results/master/"+ experiment + "/" + group + "/"+ world + "/" + set + "/episodes.json", function (episodes) {
             for (let episode_ind = 0; episode_ind < episodes.length; episode_ind++) {
                 let episode = episodes[episode_ind];
+                episode.winner = GetWinner(episode.values);
                 if (winner != agents.length && winner != episode.winner) continue;
                 let container = div.append("div")
                     .style("cursor","pointer")
