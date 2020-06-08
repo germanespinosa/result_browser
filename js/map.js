@@ -100,7 +100,7 @@ function DrawEpisodeStep(){
         }
 
         let max = 0;
-        let last_x=0,lasty=0;
+        let last_x=0,last_y=0;
         for (let step=0; step<CurrentEpisode.step || ( step == CurrentEpisode.step && agent_ind <= CurrentEpisode.agent);step++){
             let position = CurrentEpisode.trajectories[agent_ind][step];
             let x = position[0] - CurrentEpisode.coordinates[0][0];
@@ -268,7 +268,7 @@ function DrawMap(cells, occlusions, spawn_locations, svg, agent, width, height){
             .attr("height", map.x.bandwidth()-2)
             .style("fill-opacity", 0)
             .style("stroke", agent_colors[agent_ind])
-            .style("stroke-width", 2)
+            .style("stroke-width", 6)
         ;
     }
 }
