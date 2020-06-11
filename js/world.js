@@ -43,3 +43,11 @@ function load_world(experiment_name, group_name, world_name){
         updateView();
     });
 }
+
+function download_csv(){
+    loadfile(project_folder + '/stats.json', function(experiment) {
+        let content = get_data(experiment["groups"][parameters.group].worlds[parameters.world].sets);
+        console.log(content);
+        download(content,"world.csv");
+    });
+}

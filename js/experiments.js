@@ -1,9 +1,17 @@
 window.onload = function () {
-    loadfile('https://raw.githubusercontent.com/germanespinosa/results/master/index.json', function(data) {
-        var tag = document.getElementById("content")
-        var arrayLength = data.length;
-        for (var i = 0; i < arrayLength; i++) {
-            tag.innerHTML += "<h2><a href='experiment.html?experiment=" + data[i] + "'>" + data[i] + "</a></h2>";
-        }
-    });
+    let experiment_name = parameters.experiment;
+    let group_name = parameters.group;
+    let wold_name = parameters.world;
+    let set_name = parameters.set;
+    let title = document.getElementById("title");
+    title.innerHTML = parameters.world;
+    loadSettings();
+    load_experiments();
 };
+
+
+function load_experiments(){
+    loadfile(results_folder + '/experiments.json', function(experiments) {
+
+    });
+}

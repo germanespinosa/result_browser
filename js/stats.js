@@ -29,3 +29,30 @@ function LoadStats(div, data, width){
     div.style.height = "" + (data_point_count * 25) + "px";
     div.style.width = "" + width + "px";
 }
+
+function get_data(data_dict){
+    let data_names = Object.keys(data_dict);
+    let titles = "";
+    let lines = "";
+    for (let dn=0;dn<data_names.length;dn++) {
+        let name = data_names[dn];
+        let data = data_dict[name];
+        lines += name;
+        let data_point_count = 0;
+        let data_points = Object.keys(data.stats[Winner]);
+        data_point_count = data_points.length;
+        for (let data_point_ind = 0; data_point_ind < data_points.length; data_point_ind++) {
+            let data_point_name = data_points[data_point_ind];
+            let data_point = data.stats[Winner][data_point_name];
+            if (dn == 0) titles += "," + data_point_name;
+
+            if (typeof data_point == "number") {
+                lines += "," + round(data_point);
+            } else {
+                lines += "," + data_point[Agent];
+            }
+        }
+        lines += "\n";
+    }
+    return titles + "\n" + lines;
+}

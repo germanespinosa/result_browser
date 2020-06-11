@@ -11,7 +11,8 @@ function getUrlVars() {
     return vars;
 }
 parameters = getUrlVars();
-project_folder = "https://raw.githubusercontent.com/germanespinosa/results/master/" + parameters["experiment"] + "/";
+results_folder = "https://raw.githubusercontent.com/germanespinosa/results/master/";
+project_folder = results_folder + parameters["experiment"] + "/";
 img_folder = project_folder + "heatmaps/";
 
 function round(a){
@@ -50,4 +51,12 @@ function GetUrl(url, experiment, group, world, set){
 
 function NavigateTo (url){
     window.location= url + "&Winner=" + Winner +  "&Agent=" + Agent
+}
+
+function download(data, filename) {
+    var hiddenElement = document.createElement('a');
+    hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(data);
+    hiddenElement.target = '_blank';
+    hiddenElement.download = filename;
+    hiddenElement.click();
 }

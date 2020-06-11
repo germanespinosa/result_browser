@@ -76,6 +76,7 @@ function loadSettings() {
     }
     HTML += "<option value='" + agents.length + "'" + ( agents.length==Agent?" selected='selected'" :"") + ">both</option>"
     HTML += "</select></div>"
+    HTML += "<div class='download' onclick='download_csv()'><div>"
     settings.innerHTML = HTML;
     Winner = agents.length; //al
     Agent = agents.length; //all

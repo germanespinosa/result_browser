@@ -17,7 +17,7 @@ function load_experiment(experiment_name){
         for (let i=0;i<groups.length;i++){
             let group = groups[i];
             header += "<div class='group_header' id='header_" + group + "'>";
-            header += "<div class='title' id='title_" + group + "'>" + group + "</div>";
+            header += "<div class='title' id='title_" + group + "' ><img src='css/img/download.png' style='height: 15px;width: 15px;cursor: pointer' onclick='download_set(\"" + group + "\")'/> " + group + "</div>";
             header += "<div class='stats' id='stats_" + group + "'></div>";
             header += "</div>";
             HTML += "<div class='group_column' id='" + group + "'>";
@@ -48,5 +48,21 @@ function load_experiment(experiment_name){
             }
         }
         Render();
+    });
+}
+
+function download_csv(){
+    loadfile(project_folder + '/stats.json', function(experiment) {
+        let content = get_data(experiment.groups);
+        console.log(content);
+        download(content,"experiment.csv");
+    });
+}
+
+function download_set(group){
+    loadfile(project_folder + '/stats.json', function(experiment) {
+        let content = get_data(experiment.groups[group].worlds);
+        console.log(content);
+        download(content,"group_" + group +".csv");
     });
 }

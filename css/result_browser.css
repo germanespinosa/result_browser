@@ -30,7 +30,7 @@ html,body {
 
 #title{
     float: top;
-    height:5%;
+    height:15px;
 }
 
 #content{
@@ -166,8 +166,31 @@ html,body {
 
 /*settings*/
 
+
+#settings {
+    width: 500px;
+    column-count: 3;
+}
+
 .setting_box {
     padding: 5px;
+}
+
+.download {
+    background: url('img/download.png');
+    cursor: pointer;
+    float: left;
+    height: 27px;
+    width: 27px;
+    margin-top: 10px;
+}
+
+#agent_select{
+    width: 150px;
+}
+
+#winner_select{
+    width: 150px;
 }
 
 /*playback*/
@@ -200,6 +223,7 @@ html,body {
     cursor: pointer;
     border-radius: 5px;
     border: 2px solid #999999;
+    background-color: white;
     float: left;
     height: 27px;
     width: 30px;
