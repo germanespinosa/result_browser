@@ -63,23 +63,24 @@ function loadSettings() {
     let settings = document.getElementById("settings");
     let HTML = ""
     //results
-    HTML += "<div class='setting_box'><label for='winner_select'>Result: </label><select id='winner_select'>"
+    HTML += "<div class='setting_box'><label for='winner_select'>Result: </label><select id='winner_select'>";
     for (let r=0;r<agents.length;r++){
-        HTML += "<option value='" + r + "'" + ( r==Winner?" selected='selected'" :"") + ">"+ results[r] + "</option>"
+        HTML += "<option value='" + r + "'" + ( r==Winner?" selected='selected'" :"") + ">"+ results[r] + "</option>";
     }
-    HTML += "<option value='" + agents.length + "'" + ( agents.length==Winner?" selected='selected'" :"") + ">all</option>"
-    HTML += "</select></div>"
+    HTML += "<option value='" + agents.length + "'" + ( agents.length==Winner?" selected='selected'" :"") + ">all</option>";
+    HTML += "</select></div>";
     //agents
-    HTML += "<div class='setting_box'><label for='agent_select'>Agent: </label><select id='agent_select'>"
+    HTML += "<div class='setting_box'><label for='agent_select'>Agent: </label><select id='agent_select'>";
     for (let r=0;r<agents.length;r++){
-        HTML += "<option value='" + r + "'" + ( r==Agent?" selected='selected'" :"") + ">"+ agents[r] + "</option>"
+        HTML += "<option value='" + r + "'" + ( r==Agent?" selected='selected'" :"") + ">"+ agents[r] + "</option>";
     }
-    HTML += "<option value='" + agents.length + "'" + ( agents.length==Agent?" selected='selected'" :"") + ">both</option>"
-    HTML += "</select></div>"
-    HTML += "<div class='download' onclick='download_csv()'><div>"
+    HTML += "<option value='" + agents.length + "'" + ( agents.length==Agent?" selected='selected'" :"") + ">both</option>";
+    HTML += "</select></div>";
+    if (typeof download_csv == "function")
+        HTML += "<div class='download' onclick='download_csv()'><div>";
     settings.innerHTML = HTML;
-    Winner = agents.length; //al
-    Agent = agents.length; //all
+    Winner = agents.length;
+    Agent = agents.length;
     let winner_select = document.getElementById("winner_select");
     winner_select.onchange = updateWinner;
     let agent_select = document.getElementById("agent_select");

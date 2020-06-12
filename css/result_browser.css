@@ -19,6 +19,15 @@ html,body {
     position:relative;
 }
 
+.group_body {
+    padding-top: 10px;
+    background-color: grey;
+    height: 600px;
+    width: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
 .title{
     padding-top: 5px;
     font-size: large;

@@ -14,6 +14,7 @@ function load_world(experiment_name, group_name, world_name){
         let content = document.getElementById("content");
         let world = experiment.groups[group_name].worlds[world_name];
         let sets = Object.keys(world.sets);
+        let width = (window.innerWidth - 100) / sets.length;
         let HTML = "<div class='group_table'>";
         for (let i=0;i<sets.length;i++){
             HTML += "<div class='group_column' id='" + sets[i] + "'>";
@@ -32,12 +33,12 @@ function load_world(experiment_name, group_name, world_name){
         for (let i=0;i<sets.length;i++){
             let set_ = sets[i]
             let content = document.getElementById("stats_" + set_);
-            LoadStats (content,world.sets[set_], 300);
+            LoadStats (content,world.sets[set_], width);
         }
         for (let i=0;i<sets.length;i++){
             let set_ = sets[i]
             let content = document.getElementById("maps_" + set_);
-            AddMap(300,300,content, experiment_name, group_name, world_name, set_, GetUrl("set.html",experiment_name,group_name,world_name,set_));
+            AddMap(width,width,content, experiment_name, group_name, world_name, set_, GetUrl("set.html",experiment_name,group_name,world_name,set_));
         }
         Render();
         updateView();
