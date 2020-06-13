@@ -11,12 +11,12 @@ window.onload = function () {
 function load_experiment(experiment_name){
     loadfile(project_folder + '/stats.json', function(experiment) {
         let content = document.getElementById("content");
-        let groups = Object.keys(experiment.groups);
+        let groups = experiment.groups;
         let width = (window.innerWidth - 200) / groups.length;
         let header = "<div class='group_table group_header'>"
         let HTML = "<div class='group_body'><div class='group_table'>";
         for (let i=0;i<groups.length;i++){
-            let group = groups[i];
+            let group = groups[i].name;
             header += "<div class='group_header' id='header_" + group + "'>";
             header += "<div class='title' id='title_" + group + "' ><img src='css/img/download.png' style='height: 15px;width: 15px;cursor: pointer' onclick='download_set(\"" + group + "\")'/> " + group + "</div>";
             header += "<div class='stats' id='stats_" + group + "'></div>";
@@ -34,17 +34,17 @@ function load_experiment(experiment_name){
         document.body.appendChild(sheet);
 
         for (let i=0;i<groups.length;i++){
-            let group = groups[i];
+            let group = groups[i].name;
             let content = document.getElementById("stats_"+group);
-            LoadStats (content, experiment.groups[group], width);
+            LoadStats (content, groups[i], width);
         }
 
         for (let i=0;i<groups.length;i++){
-            let group = groups[i]
+            let group = groups[i].name
             let content = document.getElementById("maps_" + group);
-            let worlds = Object.keys(experiment.groups[group].worlds);
+            let worlds = groups[i].worlds;
             for (let j=0;j<worlds.length;j++){
-                let world = worlds[j];
+                let world = worlds[j].name;
                 AddMap(width, width, content, experiment_name, group, world,"", GetUrl("world.html",experiment_name,group,world));
             }
         }

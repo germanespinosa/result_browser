@@ -60,3 +60,8 @@ function download(data, filename) {
     hiddenElement.download = filename;
     hiddenElement.click();
 }
+
+function get_item_by_name(list, name){
+    for (let i=0 ;i<list.length;i++)
+        if (list[i].name == name) return list[i];
+}

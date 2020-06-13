@@ -12,15 +12,16 @@ window.onload = function () {
 function load_world(experiment_name, group_name, world_name){
     loadfile(project_folder + '/stats.json', function(experiment) {
         let content = document.getElementById("content");
-        let world = experiment.groups[group_name].worlds[world_name];
-        let sets = Object.keys(world.sets);
+        let world = get_item_by_name(get_item_by_name(experiment.groups,group_name).worlds,world_name);
+        let sets = world.sets;
         let width = (window.innerWidth - 100) / sets.length;
         let HTML = "<div class='group_table'>";
         for (let i=0;i<sets.length;i++){
-            HTML += "<div class='group_column' id='" + sets[i] + "'>";
-            HTML += "<div class='title' id='title_" + sets[i] + "'>" + sets[i] + "</div>";
-            HTML += "<div class='stats' id='stats_" + sets[i] + "'></div>";
-            HTML += "<div class='maps' id='maps_" + sets[i] + "'></div>";
+            let set_name = sets[i].name;
+            HTML += "<div class='group_column' id='" + set_name + "'>";
+            HTML += "<div class='title' id='title_" + set_name + "'>" + set_name + "</div>";
+            HTML += "<div class='stats' id='stats_" + set_name + "'></div>";
+            HTML += "<div class='maps' id='maps_" + set_name + "'></div>";
             HTML += "</div>";
         }
         HTML +="</div>"
@@ -31,12 +32,12 @@ function load_world(experiment_name, group_name, world_name){
         document.body.appendChild(sheet);
 
         for (let i=0;i<sets.length;i++){
-            let set_ = sets[i]
+            let set_ = sets[i].name;
             let content = document.getElementById("stats_" + set_);
-            LoadStats (content,world.sets[set_], width);
+            LoadStats (content,sets[i], width);
         }
         for (let i=0;i<sets.length;i++){
-            let set_ = sets[i]
+            let set_ = sets[i].name;
             let content = document.getElementById("maps_" + set_);
             AddMap(width,width,content, experiment_name, group_name, world_name, set_, GetUrl("set.html",experiment_name,group_name,world_name,set_));
         }

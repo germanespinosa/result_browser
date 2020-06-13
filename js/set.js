@@ -16,8 +16,8 @@ let DisplayValue;
 function load_set(experiment_name, group_name, world_name, set_name){
     loadfile(project_folder + '/stats.json', function(experiment) {
         let content = document.getElementById("content");
-        let world = experiment.groups[group_name].worlds[world_name];
-        let sets = Object.keys(world.sets);
+        let world = get_item_by_name(get_item_by_name(experiment.groups,group_name).worlds,world_name);
+        let sets = world.sets;
         let HTML = "";
         HTML += "<div class='set_layout' >";
             HTML += "<div class='left_spacer'></div>";
