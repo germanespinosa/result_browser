@@ -48,7 +48,7 @@ function load_world(experiment_name, group_name, world_name){
 
 function download_csv(){
     loadfile(project_folder + '/stats.json', function(experiment) {
-        let content = get_data(experiment["groups"][parameters.group].worlds[parameters.world].sets);
+        let content = get_data(get_item_by_name(get_item_by_name(experiment.groups,parameters.group).worlds,parameters.world).sets);
         console.log(content);
         download(content,"world.csv");
     });

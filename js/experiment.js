@@ -62,7 +62,7 @@ function download_csv(){
 
 function download_set(group){
     loadfile(project_folder + '/stats.json', function(experiment) {
-        let content = get_data(experiment.groups[group].worlds);
+        let content = get_data(get_item_by_name(experiment.groups,group).worlds);
         console.log(content);
         download(content,"group_" + group +".csv");
     });

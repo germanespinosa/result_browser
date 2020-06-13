@@ -30,13 +30,12 @@ function LoadStats(div, data, width){
     div.style.width = "" + width + "px";
 }
 
-function get_data(data_dict){
-    let data_names = Object.keys(data_dict);
+function get_data(data_list){
     let titles = "";
     let lines = "";
-    for (let dn=0;dn<data_names.length;dn++) {
-        let name = data_names[dn];
-        let data = data_dict[name];
+    for (let dn=0;dn<data_list.length;dn++) {
+        let data = data_list[dn];
+        let name = data.name;
         lines += name;
         let data_point_count = 0;
         let data_points = Object.keys(data.stats[Winner]);
