@@ -147,10 +147,11 @@ function SetCurrentEpisode(div, index, coordinates, episode, occlusions, spawn_l
     play();
 }
 
+default_winner = 1;
 function GetWinner(values){
-    let max = 0;
-    for (let i=1; i<values.length ; i++){
-        if (values[i][values[i].length-1]>values[max][values[max].length-1]) max = i;
+    let max = default_winner;
+    for (let i=0; i<values.length ; i++){
+        if (values[i][values[i].length-1]==100) max = i;
     }
     return max;
 }
