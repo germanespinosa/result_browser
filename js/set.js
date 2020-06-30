@@ -129,6 +129,14 @@ function prev(){
     UpdateRewardsProgression();
 }
 
+function SeesOthers(step, agent){
+    agent += 1;
+    if (agent == agents.length) agent = 0;
+    let agent_locations = GetLocations(step, agent);
+    let visibility = GetVisibleCells(agent_locations[agent]);
+    for (let i = 0; i<agent_locations.length;i++) if (agent !=i && contains(visibility,agent_locations[i])) return true;
+    return false;
+}
 
 function UpdateRewardsProgression( ){
     let margin = {top: 10, right: 20, bottom: 10, left: 30}
@@ -192,11 +200,8 @@ function UpdateRewardsProgression( ){
                 }
                 return 3; })
             .style("fill", function(d,i) {
-                let last_step = CurrentEpisode.agent < agent_ind ? CurrentEpisode.step - 1 : CurrentEpisode.step;
-                if (i == last_step && agent_ind != CurrentEpisode.agent) {
-                    if (CurrentEpisode.visible_agents.length>0){
-                        return "yellow";
-                    }
+                if (SeesOthers(i,agent_ind)){
+                    return "yellow";
                 }
                 return fill_colors[agent_ind];
             })
