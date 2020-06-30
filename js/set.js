@@ -191,7 +191,15 @@ function UpdateRewardsProgression( ){
                     return 6;
                 }
                 return 3; })
-            .style("fill", fill_colors[agent_ind])
+            .style("fill", function(d,i) {
+                let last_step = CurrentEpisode.agent < agent_ind ? CurrentEpisode.step - 1 : CurrentEpisode.step;
+                if (i == last_step && agent_ind != CurrentEpisode.agent) {
+                    if (CurrentEpisode.visible_agents.length>0){
+                        return "yellow";
+                    }
+                }
+                return fill_colors[agent_ind];
+            })
             .on("click", function(d, i, c) {
                 CurrentEpisode.step = i;
                 CurrentEpisode.agent = agent_ind;
@@ -200,7 +208,6 @@ function UpdateRewardsProgression( ){
                 DisplayValue.innerText = "value: " + round(CurrentEpisode.values[agent_ind][i]);
             })
             .on("mouseover", function(d , i) {
-                console.log(this,d,i);
                 d3.select(this)
                     .style("r",10);
                 DisplayStep.innerText = "step: " + i + "/" + CurrentEpisode.values[agent_ind].length;

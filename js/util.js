@@ -15,6 +15,15 @@ results_folder = "https://raw.githubusercontent.com/germanespinosa/results/maste
 project_folder = results_folder + parameters["experiment"] + "/";
 img_folder = project_folder + "heatmaps/";
 
+function equal(a,b){
+    return JSON.stringify(a) == JSON.stringify(b);
+}
+
+function contains(l,i){
+    for (let index=0; index<l.length; index ++) if (equal(l[index], i)) return true;
+    return false;
+}
+
 function round(a){
     return(Math.round(a * 100)/ 100);
 }

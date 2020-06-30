@@ -83,17 +83,48 @@ CreateHeatmap = function (DOMdiv, winner, width, height){
 
 var CurrentEpisode;
 
+function UpdateAgentLocations(){
+    CurrentEpisode.agents_locations = []
+    let next_agent = CurrentEpisode.agent;
+    let current_step = CurrentEpisode.step;
+    for (let agent_ind=0;agent_ind<agents.length; agent_ind++){
+        let step =  agent_ind <= next_agent?current_step:current_step-1;
+        let position = CurrentEpisode.trajectories[agent_ind][step];
+        CurrentEpisode.agents_locations.push(position);
+    }
+    next_agent += 1
+    if (next_agent === agents.length) {
+        next_agent = 0;
+        current_step += 1;
+    }
+    CurrentEpisode.visible_cells = []
+    let position = CurrentEpisode.agents_locations[next_agent];
+    for (let i = 0; i < CurrentMap.visibility.length; i++) {
+        if (equal(CurrentMap.visibility[i].cell, position)) {
+            CurrentEpisode.visible_cells = CurrentMap.visibility[i].connections;
+            break;
+        }
+    }
+    CurrentEpisode.visible_agents = []
+    for (let agent_ind=0;agent_ind < agents.length; agent_ind++) {
+        if (agent_ind !== next_agent && contains(CurrentEpisode.visible_cells, CurrentEpisode.agents_locations[agent_ind])){
+            CurrentEpisode.visible_agents.push(agent_ind);
+            break;
+        }
+    }
+}
 
 function DrawEpisodeStep(){
+    UpdateAgentLocations();
     let width = 450;
     let height = 450;
     document.getElementById("current_episode").innerHTML="";
     for (let agent_ind = 0;agent_ind < agents.length;agent_ind++) {
 
         let cells=[]
-        for(let y = CurrentEpisode.coordinates[0][1];y <= CurrentEpisode.coordinates[1][1];y++) {
+        for(let y = CurrentMap.coordinates[0][1];y <= CurrentMap.coordinates[1][1];y++) {
             let row = [];
-            for(let x = CurrentEpisode.coordinates[0][0];x <= CurrentEpisode.coordinates[1][0];x++) {
+            for(let x = CurrentMap.coordinates[0][0];x <= CurrentMap.coordinates[1][0];x++) {
                 row.push(0);
             }
             cells.push(row);
@@ -101,10 +132,11 @@ function DrawEpisodeStep(){
 
         let max = 0;
         let last_x=0,last_y=0;
+        let position;
         for (let step=0; step<CurrentEpisode.step || ( step == CurrentEpisode.step && agent_ind <= CurrentEpisode.agent);step++){
-            let position = CurrentEpisode.trajectories[agent_ind][step];
-            let x = position[0] - CurrentEpisode.coordinates[0][0];
-            let y = position[1] - CurrentEpisode.coordinates[0][1];
+            position = CurrentEpisode.trajectories[agent_ind][step];
+            let x = position[0] - CurrentMap.coordinates[0][0];
+            let y = position[1] - CurrentMap.coordinates[0][1];
             cells[y][x] += 1;
             if (max<cells[y][x]) max = cells[y][x];
             last_x=x;
@@ -121,22 +153,18 @@ function DrawEpisodeStep(){
             .attr("height", height)
             .append("g");
 
-        DrawMap(cells, CurrentEpisode.occlusions, CurrentEpisode.spawn_locations, svg, agent_ind, width, height);
+        DrawMap(cells, CurrentMap.occlusions, CurrentMap.spawn_locations, svg, agent_ind, width, height, CurrentEpisode.visible_cells);
 
     }
 }
 
-function SetCurrentEpisode(div, index, coordinates, episode, occlusions, spawn_locations){
+function SetCurrentEpisode(div, index, episode){
     CurrentEpisode = episode;
-
     CurrentEpisode.max_value = 0;
-    for (let i=0; i<CurrentEpisode.values.length;i++)
-        for (let j=0; j<CurrentEpisode.values[i].length;j++)
+    for (let i = 0; i < CurrentEpisode.values.length; i++)
+        for (let j = 0; j < CurrentEpisode.values[i].length; j++)
             if (CurrentEpisode.values[i][j] > CurrentEpisode.max_value) CurrentEpisode.max_value=CurrentEpisode.values[i][j];
     CurrentEpisode.container = div;
-    CurrentEpisode.coordinates = coordinates;
-    CurrentEpisode.occlusions = occlusions;
-    CurrentEpisode.spawn_locations = spawn_locations;
     CurrentEpisode.step = 0;
     CurrentEpisode.agent = agents.length - 1;
     DrawEpisodeStep();
@@ -150,11 +178,13 @@ function SetCurrentEpisode(div, index, coordinates, episode, occlusions, spawn_l
 default_winner = 1;
 function GetWinner(values){
     let max = default_winner;
-    for (let i=0; i<values.length ; i++){
-        if (values[i][values[i].length-1]==100) max = i;
+    for (let i = 0; i < values.length ; i++){
+        if (values[i][values[i].length-1] === 100) max = i;
     }
     return max;
 }
+
+var CurrentMap;
 
 CreateEpisodes = function (DOMdiv, winner, width, height, experiment, group, world, set){
     let div = d3.select(DOMdiv);
@@ -162,10 +192,17 @@ CreateEpisodes = function (DOMdiv, winner, width, height, experiment, group, wor
     let source = GetSource(experiment, group, world, set, 0, 0);
 
     let selected_episode = -1;
-    if (location.hash != "") selected_episode = location.hash.replace("#","");
+    if (location.hash !== "") selected_episode = location.hash.replace("#","");
     d3.json(source, function (data) {
         let occlusions = data.occlusions;
         let cells = data.cells;
+        CurrentMap = {};
+        CurrentMap.cells = data.cells;
+        CurrentMap.spawn_locations = data.spawn_locations;
+        CurrentMap.occlusions = data.occlusions;
+        CurrentMap.coordinates = data.coordinates;
+        CurrentMap.visibility = data.visibility;
+
         d3.json("https://raw.githubusercontent.com/germanespinosa/results/master/"+ experiment + "/" + group + "/"+ world + "/" + set + "/episodes.json", function (episodes) {
             for (let episode_ind = 0; episode_ind < episodes.length; episode_ind++) {
                 let episode = episodes[episode_ind];
@@ -176,15 +213,12 @@ CreateEpisodes = function (DOMdiv, winner, width, height, experiment, group, wor
                     .attr("id","episode_" + episode_ind)
                     .attr("class","episode_box")
                     .attr("onClick","SetCurrentEpisode(this, " + episode_ind + "," +
-                                                                 JSON.stringify(data.coordinates) + "," +
-                                                                 JSON.stringify(episode) + "," +
-                                                                 JSON.stringify(occlusions) + "," +
-                                                                 JSON.stringify(data.spawn_locations) + ")");
-                if (selected_episode == episode_ind || selected_episode == -1) {
+                                                                 JSON.stringify(episode) + ")");
+                if (selected_episode === episode_ind || selected_episode === -1) {
                     selected_episode = episode_ind;
-                    SetCurrentEpisode( container.node(), episode_ind, data.coordinates, episode, occlusions, data.spawn_locations);
+                    SetCurrentEpisode( container.node(), episode_ind, episode);
                 }
-                for (let agent_ind=0;agent_ind<episode.trajectories.length;agent_ind++) {
+                for (let agent_ind=0;agent_ind < episode.trajectories.length;agent_ind++) {
                     let trajectory =  episode.trajectories[agent_ind];
 
                     for(let y = 0;y < cells.length;y++) for(let x = 0;x < cells[0].length;x++) cells[y][x] = 0;
@@ -204,7 +238,7 @@ CreateEpisodes = function (DOMdiv, winner, width, height, experiment, group, wor
                         .attr("height", height)
                         .append("g");
 
-                    DrawMap(data.cells, occlusions, data.spawn_locations, svg, agent_ind, width, height)
+                    DrawMap(CurrentMap.cells, occlusions, CurrentMap.spawn_locations, svg, agent_ind, width, height)
                 }
             }
 
@@ -213,7 +247,7 @@ CreateEpisodes = function (DOMdiv, winner, width, height, experiment, group, wor
     });
 }
 
-function DrawMap(cells, occlusions, spawn_locations, svg, agent, width, height){
+function DrawMap(cells, occlusions, spawn_locations, svg, agent, width, height, highlights){
 
     let map = Map(cells, width, height,  fill_colors[agent]);
 
@@ -253,6 +287,24 @@ function DrawMap(cells, occlusions, spawn_locations, svg, agent, width, height){
         })
         .style("stroke", "grey")
     ;
+
+    if (typeof highlights == "object"){
+        svg.selectAll()
+            .data(highlights)
+            .enter()
+            .append("circle")
+            .attr("cx", function (d) {
+                return map.x(d[0] + 7) + map.x.bandwidth() / 2;
+            })
+            .attr("cy", function (d) {
+                return map.x(d[1] + 7) + map.y.bandwidth() / 2;
+            })
+            .attr("r", 3)
+            .style("fill", function (d) {
+                return "orange"
+            })
+        ;
+    }
 
     for (let agent_ind = 0; agent_ind < spawn_locations.length; agent_ind++) {
         svg.selectAll()
