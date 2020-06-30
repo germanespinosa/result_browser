@@ -83,29 +83,35 @@ CreateHeatmap = function (DOMdiv, winner, width, height){
 
 var CurrentEpisode;
 
-function UpdateAgentLocations(){
-    CurrentEpisode.agents_locations = []
-    let next_agent = CurrentEpisode.agent;
-    let current_step = CurrentEpisode.step;
+function GetLocations(current_step, agent){
+    let agents_locations = [];
     for (let agent_ind=0;agent_ind<agents.length; agent_ind++){
-        let step =  agent_ind <= next_agent?current_step:current_step-1;
+        let step =  agent_ind <= agent?current_step:current_step-1;
         let position = CurrentEpisode.trajectories[agent_ind][step];
-        CurrentEpisode.agents_locations.push(position);
+        agents_locations.push(position);
     }
-    next_agent += 1
-    if (next_agent === agents.length) {
-        next_agent = 0;
-        current_step += 1;
-    }
-    CurrentEpisode.visible_cells = []
-    let position = CurrentEpisode.agents_locations[next_agent];
+    return agents_locations;
+}
+
+function GetVisibleCells(cell){
+    let visible_cells = []
     for (let i = 0; i < CurrentMap.visibility.length; i++) {
-        if (equal(CurrentMap.visibility[i].cell, position)) {
-            CurrentEpisode.visible_cells = CurrentMap.visibility[i].connections;
+        if (equal(CurrentMap.visibility[i].cell, cell)) {
+            visible_cells = CurrentMap.visibility[i].connections;
             break;
         }
     }
-    CurrentEpisode.visible_agents = []
+    return visible_cells
+}
+
+function UpdateAgentLocations(){
+    CurrentEpisode.agents_locations = GetLocations(CurrentEpisode.step, CurrentEpisode.agent);
+    let next_agent = CurrentEpisode.agent+1;
+    if (next_agent === agents.length) {
+        next_agent = 0;
+    }
+    CurrentEpisode.visible_cells = GetVisibleCells(CurrentEpisode.agents_locations[next_agent]);
+    CurrentEpisode.visible_agents = [];
     for (let agent_ind=0;agent_ind < agents.length; agent_ind++) {
         if (agent_ind !== next_agent && contains(CurrentEpisode.visible_cells, CurrentEpisode.agents_locations[agent_ind])){
             CurrentEpisode.visible_agents.push(agent_ind);
@@ -119,6 +125,8 @@ function DrawEpisodeStep(){
     let width = 450;
     let height = 450;
     document.getElementById("current_episode").innerHTML="";
+    let next_agent = CurrentEpisode.agent + 1;
+    if (next_agent == agents.length) next_agent = 0;
     for (let agent_ind = 0;agent_ind < agents.length;agent_ind++) {
 
         let cells=[]
@@ -152,8 +160,10 @@ function DrawEpisodeStep(){
             .attr("width", width)
             .attr("height", height)
             .append("g");
-
-        DrawMap(cells, CurrentMap.occlusions, CurrentMap.spawn_locations, svg, agent_ind, width, height, CurrentEpisode.visible_cells);
+        if (agent_ind == next_agent)
+            DrawMap(cells, CurrentMap.occlusions, CurrentMap.spawn_locations, svg, agent_ind, width, height, CurrentEpisode.visible_cells);
+        else
+            DrawMap(cells, CurrentMap.occlusions, CurrentMap.spawn_locations, svg, agent_ind, width, height);
 
     }
 }
@@ -300,9 +310,7 @@ function DrawMap(cells, occlusions, spawn_locations, svg, agent, width, height, 
                 return map.x(d[1] + 7) + map.y.bandwidth() / 2;
             })
             .attr("r", 3)
-            .style("fill", function (d) {
-                return "orange"
-            })
+            .style("fill", fill_colors[agent])
         ;
     }
 
